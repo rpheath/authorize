@@ -1,0 +1,95 @@
+h1. Authorize: Action-level Role and Permissions handling for Rails
+
+*Credit:* This plugin expands on the original code and ideas of "Chris Scharf":http://github.com/scharfie.
+
+This plugin provides role and permissions handling for Rails applications. It is designed for an escalating permissions
+system, where each higher role contains all of the permissions of the roles below it. If you are seeking a many-to-many
+type of role/permissions solution, this is not it.
+
+h2. Getting Started
+
+Here's all you need to know to get started:
+
+# Make sure you have a #role column of type Integer in your "users" table
+# Installation: @script/plugin install git://github.com/rpheath/authorize.git@
+# Open up the model that manages your users and add @include Authorize::Roles@ at the top
+# Redefine the constants in @Authorize::Levels@ (authorize/lib/authorize/levels.rb) to make sense (these
+constants will be used to generate methods on the fly, so use proper naming :-)
+
+h2. Usage
+
+Once you've done those initial steps, you can define permissions in your controllers like so:
+
+<pre><code>class PostsController < ActionController::Base
+  permissions do
+    author :new, :create
+    editor :edit, :update
+    publisher :destroy
+  end
+
+  # ...
+end
+</code></pre>
+
+You define the lowest level of permission for a list of actions. So assuming that an editor is higher up than an author,
+an editor would have access to new, create, edit, update, whereas an author can only access new and create. Make sense?
+
+Keep in mind, the available methods used in the permissions block (i.e. author, editor, etc) map to the constants that
+you have defined in @Authorize::Levels@. Meaning, the above code would assume you had:
+
+<pre><code>module Authorize
+  module Levels
+    AUTHOR    = 0 unless const_defined?(:AUTHOR)
+    EDITOR    = 1 unless const_defined?(:EDITOR)
+    PUBLISHER = 2 unless const_defined?(:PUBLISHER)
+  end
+end
+</code></pre>
+
+And having a @PUBLIC_USER@ constant would build a @public_user@ permissions method, as expected, so underscores are handled properly.
+
+h2. Invalid Permission
+
+If a user tries to access an action that he/she does not have access to, a protected @invalid_permissions@ method would get called.
+By default this method will display a warning and redirect to the @root_path@. However, if want somet other behavior, just redefine this
+method in your application controller.
+
+h2. Choosing a Role
+
+There's built-in support for drop down menus. Assuming you included the module into a @User@ class, you would call:
+@User::Role.to_options@. Pass @false@ as a parameter to remove the defaul @-- Choose Role --@ option. Or you can pass
+@:default_text => '--'@ to set your own. For good measure, you could wrap this up in a helper called @role_options@ or something.
+
+h2. Inactive Role
+
+It seems that most of my applications involving these types of permissions involve an "inactive" state for the user.
+Essentially, this is nothing more than a role with no permission to do anything, and I feel should be treated as such.
+Browse through the code to see how the inactive stuff works, but really it's just like another role, and you have @active?@
+and @inactive?@ methods available automatically.
+
+If you look in @Authorize::Levels@ you can see that there's @self.default@ and @self.lowest@ methods. These are useful for defining
+what you would like your default permission to be (most cases, inactive) and your lowest level of permission. If you are not using
+the inactive state, then you typically would want the default and lowest to be the same, but I'll leave that up to you.
+
+Here's an example usecase for the @self.default@ method:
+
+<pre><code>class User < ActiveRecord::Base
+  before_create :set_default_role
+  
+  private
+    def set_default_role
+      self[:role] = Authorize::Levels.default
+    end
+end
+</code></pre>
+
+h2. The Super User
+
+In a lot of cases, you want to have that user who is above all and permissions are simply irrelevant. The plugin will react to
+a @super_user?@ method, giving them permissions to do anything and everything. If you want to use it, just add a boolean "super_user"
+flag to your users table, and @ActiveRecord@ will automatically provide a @super_user?@ method. The plugin checks if the user
+responds to the super user stuff, so if you don't want to use it, you don't have to.
+
+h2. License
+
+Copyright (c) 2009 Ryan Heath, released under the MIT license
