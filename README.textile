@@ -92,4 +92,4 @@ responds to the super user stuff, so if you don't want to use it, you don't have
 
 h2. License
 
-Copyright (c) 2009 Ryan Heath, released under the MIT license
+Copyright (c) 2009 Ryan Heath and Chris Scharf, released under the MIT license
