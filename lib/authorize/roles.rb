@@ -55,7 +55,7 @@ module Authorize
     #
     # also: a super_user is always active
     def inactive?
-      return false if self.respond_to?(:super_user) && self.super_user?
+      return false if self.respond_to?(:super_user?) && self.super_user?
       self.role.to_i == Levels.get('INACTIVE')
     end
     
@@ -70,7 +70,7 @@ module Authorize
     #   current_user.role = nil
     #   current_user.role_name # => 'Not Specified'
     def role_name
-      return 'Super User' if self.respond_to?(:super_user) && self.super_user?
+      return 'Super User' if self.respond_to?(:super_user?) && self.super_user?
       return 'Not Specified' unless self.role.is_a?(Integer)
       Role.roles[self.role].name
     end
