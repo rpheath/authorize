@@ -56,7 +56,7 @@ module Authorize
     # also: a super_user is always active
     def inactive?
       return false if self.respond_to?(:super_user?) && self.super_user?
-      self.role.to_i == Levels.get('INACTIVE')
+      self.role.to_i == Levels.get(:inactive)
     end
     
     # compliments inactive?
