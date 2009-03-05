@@ -92,9 +92,14 @@ module Authorize
           # making use of the 'INACTIVE' role/state
           next if level.downcase.to_sym == :inactive
           
-          # defining the named scopes
+          # options: pass true to the named_scope method to
+          #   pull users for that role only (ignores the >= factor)
+          # 
+          # Ex:
+          #   User.authors.count        # => 30 (this one returns all roles above author too)
+          #   User.authors(true).count  # => 10 (this one returns all roles that == author)
           named_scope level.downcase.pluralize.to_sym,
-            :conditions => ["role >= ?", Levels.get(level)]
+            lambda { |*args| {:conditions => ["role #{args.first.is_a?(TrueClass) ? '=' : '>='} ?", Levels.get(level)]} }
         end
       end
     end
