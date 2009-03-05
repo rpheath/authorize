@@ -105,7 +105,6 @@ class AuthorizeRolesTest < Test::Unit::TestCase
   end
   
   test "should return 'Super User' appropriately, regardless of set role" do
-    expects_role(4)
     @user.stubs(:super_user?).returns(true)
     assert 'Super User', @user.role_name
   end
