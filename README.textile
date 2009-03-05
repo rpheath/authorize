@@ -51,13 +51,13 @@ And having a @PUBLIC_USER@ constant would build a @public_user@ permissions meth
 h2. Invalid Permission
 
 If a user tries to access an action that he/she does not have access to, a protected @invalid_permissions@ method would get called.
-By default this method will display a warning and redirect to the @root_path@. However, if want somet other behavior, just redefine this
+By default this method will display a warning and redirect to the @root_path@. However, if you want some other behavior, just redefine this
 method in your application controller.
 
 h2. Choosing a Role
 
 There's built-in support for drop down menus. Assuming you included the module into a @User@ class, you would call:
-@User::Role.to_options@. Pass @false@ as a parameter to remove the defaul @-- Choose Role --@ option. Or you can pass
+@User::Role.to_options@. Pass @false@ as a parameter to remove the default @-- Choose Role --@ option. Or you can pass
 @:default_text => '--'@ to set your own. For good measure, you could wrap this up in a helper called @role_options@ or something.
 
 h2. Inactive Role
@@ -66,6 +66,8 @@ It seems that most of my applications involving these types of permissions invol
 Essentially, this is nothing more than a role with no permission to do anything, and I feel should be treated as such.
 Browse through the code to see how the inactive stuff works, but really it's just like another role, and you have @active?@
 and @inactive?@ methods available automatically.
+
+h2. Permission Levels
 
 If you look in @Authorize::Levels@ you can see that there's @self.default@ and @self.lowest@ methods. These are useful for defining
 what you would like your default permission to be (most cases, inactive) and your lowest level of permission. If you are not using
@@ -87,8 +89,8 @@ h2. The Super User
 
 In a lot of cases, you want to have that user who is above all and permissions are simply irrelevant. The plugin will react to
 a @super_user?@ method, giving them permissions to do anything and everything. If you want to use it, just add a boolean "super_user"
-flag to your users table, and @ActiveRecord@ will automatically provide a @super_user?@ method. The plugin checks if the user
-responds to the super user stuff, so if you don't want to use it, you don't have to.
+flag to your "users" table, and @ActiveRecord@ will automatically provide a @super_user?@ method. The plugin checks if the user
+responds to the super user stuff, so if you don't want to use it, you don't have to anything.
 
 h2. License
 
