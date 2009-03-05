@@ -48,6 +48,23 @@ end
 
 And having a @PUBLIC_USER@ constant would build a @public_user@ permissions method, as expected, so underscores are handled properly.
 
+h2. Named Scopes
+
+This plugin will generate some named_scope's for you based on the permission levels you defined in @Authorize::Levels@. Sticking with our
+example from above, we'll assume you have three: AUTHOR, EDITOR, PUBLISHER. This will allow you to do:
+
+<pre><code>User.authors # => all users having the at least an author role
+User.editors # => all users having at least an editor role
+</code></pre>
+
+Now, since the permissions are setup to build upon the previous one, calling @User.authors@ will return not only all of the users having the
+author role, but also all users having a role above that (since they also have "author" permissions). I realize this may not be the most
+desireable approach in all cases, so you can pass "true" to any of the named_scope's to return the users having exactly that role.
+
+<pre><code>User.authors(true) # => all users having exactly the author role
+User.editors(true) # all users having exactly the editor role
+</code></pre>
+
 h2. Invalid Permission
 
 If a user tries to access an action that he/she does not have access to, a protected @invalid_permissions@ method would get called.
