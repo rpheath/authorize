@@ -125,4 +125,9 @@ class AuthorizeRolesTest < Test::Unit::TestCase
   test "should not create a named_scope for inactive role" do
     assert !User.respond_to?(:inactives)
   end
+  
+  test "should avoid method collision for named_scopes" do
+    assert User.respond_to?(:authors)
+    assert_equal 'list of authors', User.authors
+  end
 end

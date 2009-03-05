@@ -26,6 +26,10 @@ class User
     eval "def User.#{args.first}; end"
   end
   
+  def self.authors
+    'list of authors'
+  end
+  
   include Authorize::Roles
   
   attr_accessor :role
