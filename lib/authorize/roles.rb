@@ -84,6 +84,19 @@ module Authorize
     
     def self.included(base)
       base.extend ClassMethods
+      
+      # define named scopes for each permission level
+      base.class_eval do
+        Levels.constants.each do |level|
+          # remove the following line if you're not
+          # making use of the 'INACTIVE' role/state
+          next if level.downcase.to_sym == :inactive
+          
+          # defining the named scopes
+          named_scope level.downcase.pluralize.to_sym,
+            :conditions => ["role >= ?", Levels.get(level)]
+        end
+      end
     end
   end
 end

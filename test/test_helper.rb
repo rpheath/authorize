@@ -21,6 +21,11 @@ class Test::Unit::TestCase
 end
 
 class User
+  def self.named_scope(*args)
+    # mock named_scope definition
+    eval "def User.#{args.first}; end"
+  end
+  
   include Authorize::Roles
   
   attr_accessor :role

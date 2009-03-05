@@ -113,4 +113,16 @@ class AuthorizeRolesTest < Test::Unit::TestCase
     @user.stubs(:role).returns(nil)
     assert 'Not Specified', @user.role_name
   end
+  
+  test "should create named_scope methods for each permission level" do
+    assert User.respond_to?(:public_users)
+    assert User.respond_to?(:authors)
+    assert User.respond_to?(:editors)
+    assert User.respond_to?(:publishers)
+    assert User.respond_to?(:administrators)
+  end
+  
+  test "should not create a named_scope for inactive role" do
+    assert !User.respond_to?(:inactives)
+  end
 end
