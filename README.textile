@@ -65,6 +65,17 @@ desireable approach in all cases, so you can pass "true" to any of the named_sco
 User.editors(true) # all users having exactly the editor role
 </code></pre>
 
+h2. Block Helpers
+
+For each level of permission defined, the authorize plugin will automatically generate a block helper for you. This let's you do:
+
+<pre><code><% editor do %>
+  (editor only content)
+<% end %>
+</code></pre>
+
+In the above example, it will only yield if the current user has editor permissions or above. Useful for keeping your views clean.
+
 h2. Invalid Permission
 
 If a user tries to access an action that he/she does not have access to, a protected @invalid_permissions@ method would get called.

@@ -58,6 +58,36 @@ module Authorize
       end
     end
     
+    module Helpers
+      # provide block helpers for each defined role that
+      # will only yield if the current_user has that role
+      #
+      # Ex:
+      #   module Levels
+      #     AUTHOR = 0
+      #     EDITOR = 1
+      #   end
+      #
+      #   would result in having ...
+      #
+      #   <% author do %>
+      #     # stuff only an author would see/access
+      #   <% end %>
+      Levels.constants.each do |level|
+        # can't use define_method because we need
+        # to pass a block as a parameter; so use eval:
+        eval <<-METHOD
+          def #{level.downcase}(&block)
+            yield if current_user.send("#{level.downcase}?")
+          end
+        METHOD
+      end
+      
+      def super_user(&block)
+        yield if current_user.respond_to?(:super_user?) && current_user.super_user?
+      end
+    end
+    
     def self.included(base)
       base.extend(ClassMethods)
     end
