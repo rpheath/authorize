@@ -62,7 +62,7 @@ author role, but also all users having a role above that (since they also have "
 desireable approach in all cases, so you can pass "true" to any of the named_scope's to return the users having exactly that role.
 
 <pre><code>User.authors(true) # => all users having exactly the author role
-User.editors(true) # all users having exactly the editor role
+User.editors(true) # => all users having exactly the editor role
 </code></pre>
 
 h2. Block Helpers
